@@ -19,10 +19,8 @@ app.get("/", (req, res) => {
 // 🎯 STUDENT TASKS: Add your routes below this line
 // ------------------------------------------------
 
-// Task 1: Health Check Endpoint
-// CREATE GET /health
 app.get("/health", (req, res) => {
-  // Return JSON: { status: "ok" }
+  res.json({ status: "ok" });
 });
 
 // TASK 2: User Routes
@@ -32,23 +30,36 @@ const users = [
 ];
 
 app.get("/users", (req, res) => {
-  // Return all users
+  res.json(users); // Return all users
 });
 
 app.get("/users/:id", (req, res) => {
-  // 1. Get ID from req.params
-  // 2. Find user in array
-  // 3. Return user or 404 if not found
+  const id = parseInt(req.params.id); // 1. Get ID from req.params
+  const user = users.find((u) => u.id === id); // 2. Find user in array
+  if (user) {
+    res.json(user); // 3. Return user
+  } else {
+    res.status(404).json({ error: "User not found" }); // or 404 if not found
+  }
 });
 
 // TASK 3: Message Submission
+let messageIdCounter = 1;
+
 app.post("/messages", (req, res) => {
-  // 1. Get text from req.body
-  // 2. Validate text exists
-  // 3. Return JSON with:
-  //    - Generated ID (number)
-  //    - Original text
-  //    - status: "received"
+  const { text } = req.body; // 1. Get text from req.body
+
+  if (!text) {
+    return res.status(400).json({ error: "Text is required" }); // 2. Validate text exists
+  }
+
+  const message = {
+    id: messageIdCounter++, // Generated ID (number)
+    text, // Original text
+    status: "received", // status
+  };
+
+  res.json(message); // 3. Return JSON
 });
 
 // ------------------------------------------------
